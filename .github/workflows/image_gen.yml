@@ -1,0 +1,41 @@
+name: Generate Image Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_title:
+        description: 'Type your Image Title here'
+        required: true
+        default: 'A busy city street at night'
+
+jobs:
+  create_image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Get the repository code
+      uses: actions/checkout@v3
+
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install required tools
+      run: pip install -r requirements.txt
+
+    - name: Run the Python Script
+      env:
+        IMAGE_TITLE: ${{ github.event.inputs.image_title }}
+        API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python generate.py
+
+    - name: Save the new image back to GitHub
+      run: |
+        git config --global user.name 'GitHub Automation'
+        git config --global user.email 'action@github.com'
+        git add *.webp
+        git commit -m "Auto-generated image: ${{ github.event.inputs.image_title }}"
+        git push
