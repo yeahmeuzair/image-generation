@@ -29,7 +29,7 @@ jobs:
     - name: Run the Python Script
       env:
         IMAGE_TITLE: ${{ github.event.inputs.image_title }}
-        API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        API_KEY: ${{ secrets.HF_API_KEY }}
       run: python generate.py
 
     - name: Save the new image back to GitHub
